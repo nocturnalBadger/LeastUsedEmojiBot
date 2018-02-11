@@ -1,4 +1,4 @@
-import requests, json, tweepy, datetime
+import requests, json, tweepy
 from credentials import *
 
 def get_least_used_emoji():
@@ -36,11 +36,12 @@ api = tweepy.API(auth)
 
 leastUsedEmojiData = get_least_used_emoji()
 leastUsedEmojiChar = get_emoji_char(leastUsedEmojiData)
+leastUsedEmojiName = get_emoji_name(leastUsedEmojiData)
 
 update_profile_image(leastUsedEmojiData)
 
 try:
-    api.update_status("The least used emoji is currently: %s (%s)" % (leastUsedEmojiChar, get_emoji_name(leastUsedEmojiData)))
+    api.update_status("The least used emoji is currently: %s (%s)" % (leastUsedEmojiChar, leastUsedEmojiName))
 except tweepy.TweepError as e:
     print(e.reason)
 
