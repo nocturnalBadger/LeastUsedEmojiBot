@@ -78,12 +78,12 @@ tweetText = compare_results(leastUsedEmojiName, leastUsedEmojiChar)
 print(tweetText)
 
 
-# update_profile_image(leastUsedEmojiData)
-#
-# try:
-#     api.update_status(tweetText)
-# except tweepy.TweepError as e:
-#     print(e.reason)
+update_profile_image(leastUsedEmojiData)
+
+try:
+    api.update_status(tweetText)
+except tweepy.TweepError as e:
+    print(e.reason)
 
 # try:
 #     api.update_status(leastUsedEmojiChar * 140)
