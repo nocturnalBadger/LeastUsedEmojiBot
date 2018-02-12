@@ -17,7 +17,7 @@ def update_profile_image(jsonData):
     name = jsonData['name'].lower().replace(' ', '-')
     id = jsonData['id'].lower()
 
-    url = "https://emojipedia-us.s3.amazonaws.com/thumbs/120/mozilla/36/%s_%s.png" % (name, id)
+    url = "https://abs.twimg.com/emoji/v2/72x72/%s.png" % id
 
     response = requests.get(url)
     if response.status_code == 200:
