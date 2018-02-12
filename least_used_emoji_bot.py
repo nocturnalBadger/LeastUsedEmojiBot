@@ -47,8 +47,14 @@ def compare_results(emojiName, emojiChar):
             daysStanding = timeStanding.days
             if daysStanding > 1:
                 return "%s (%s) has been the least used emoji for %i days" %(emojiChar, emojiName, daysStanding)
+            elif daysStanding == 1:
+                return "%s (%s) has been the least used emoji for over a full day" %(emojiChar, emojiName)
             else:
-                return "%s (%s) is still the least used emoji" % (emojiChar, emojiName)
+                hoursStanding = math.floor(timeStanding.seconds / 3600)
+                if (hoursStanding % 6 == 0):
+                    return "%s (%s) has been the least used emoji for over %i hours" %(emojiChar, emojiName, hoursStanding)
+                else:
+                    return "%s (%s) is still the least used emoji" % (emojiChar, emojiName)
         else:
             with open("results.txt", 'wb') as f:
                 resultsText = (emojiChar + " " + str(math.floor(datetime.utcnow().timestamp()))).encode('utf-8')
@@ -72,12 +78,12 @@ tweetText = compare_results(leastUsedEmojiName, leastUsedEmojiChar)
 print(tweetText)
 
 
-update_profile_image(leastUsedEmojiData)
-
-try:
-    api.update_status(tweetText)
-except tweepy.TweepError as e:
-    print(e.reason)
+# update_profile_image(leastUsedEmojiData)
+#
+# try:
+#     api.update_status(tweetText)
+# except tweepy.TweepError as e:
+#     print(e.reason)
 
 # try:
 #     api.update_status(leastUsedEmojiChar * 140)
