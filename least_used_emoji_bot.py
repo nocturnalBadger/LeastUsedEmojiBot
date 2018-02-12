@@ -4,6 +4,7 @@ from credentials import *
 from datetime import datetime
 import os.path
 
+
 def get_least_used_emoji():
     url = "http://emojitracker.com/api/rankings"
 
@@ -12,6 +13,7 @@ def get_least_used_emoji():
     data = json.loads(response.text)
 
     return data[-1]
+
 
 def update_profile_image(jsonData):
     name = jsonData['name'].lower().replace(' ', '-')
@@ -25,19 +27,22 @@ def update_profile_image(jsonData):
             f.write(response.content)
     api.update_profile_image("icon.png")
 
+
 def get_emoji_char(jsonData):
     return chr(int(jsonData['id'], 16))
+
 
 def get_emoji_name(jsonData):
     return jsonData['name'].capitalize()
 
+
 def compare_results(emojiName, emojiChar):
     resultsPath = "results.txt"
-    if (os.path.exists(resultsPath)):
+    if os.path.exists(resultsPath):
         with io.open("results.txt", mode="r", encoding="utf-8") as f:
             current, initialTime = f.readline().split(" ")
             initialTime = datetime.fromtimestamp(int(initialTime))
-        if (current == emojiChar):
+        if current == emojiChar:
             timeStanding = datetime.utcnow() - initialTime
             daysStanding = timeStanding.days
             if daysStanding > 1:
