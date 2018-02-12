@@ -38,7 +38,7 @@ def get_emoji_name(jsonData):
 
 def compare_results(emojiName, emojiChar):
     resultsPath = "results.txt"
-    if os.path.exists(resultsPath):
+    if os.path.exists(resultsPath)  :
         with io.open("results.txt", mode="r", encoding="utf-8") as f:
             current, initialTime = f.readline().split(" ")
             initialTime = datetime.fromtimestamp(int(initialTime))
@@ -76,7 +76,7 @@ try:
 except tweepy.TweepError as e:
     print(e.reason)
 
-try:
-    api.update_status(leastUsedEmojiChar * 140)
-except tweepy.TweepError as e:
-    print(e.reason)
+# try:
+#     api.update_status(leastUsedEmojiChar * 140)
+# except tweepy.TweepError as e:
+#     print(e.reason)
