@@ -43,8 +43,8 @@ def compare_results(emojiName, emojiChar):
             if daysStanding > 1:
                 return "%s (%s) has been the least used emoji for %i days" %(emojiChar, emojiName, daysStanding)
         else:
-            with open("results.txt", 'w') as f:
-                resultsText = u''.join((emojiChar) + " " + str(math.floor(datetime.utcnow().timestamp()))).encode('utf-8')
+            with open("results.txt", 'wb') as f:
+                resultsText = (emojiChar + " " + str(math.floor(datetime.utcnow().timestamp()))).encode('utf-8')
                 f.write(resultsText)
             return "The least used emoji is now: %s (%s)" % (leastUsedEmojiChar, leastUsedEmojiName)
 
