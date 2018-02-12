@@ -1,5 +1,5 @@
-import math
-import requests, json, tweepy
+import math, json, io
+import requests, tweepy
 from credentials import *
 from datetime import datetime
 import os.path
@@ -34,7 +34,7 @@ def get_emoji_name(jsonData):
 def compare_results(emojiName, emojiChar):
     resultsPath = "results.txt"
     if (os.path.exists(resultsPath)):
-        with open("results.txt", "r") as f:
+        with io.open("test", mode="r", encoding="utf-8") as f:
             current, initialTime = f.readline().split(" ")
             initialTime = datetime.fromtimestamp(int(initialTime))
         if (current == emojiChar):
