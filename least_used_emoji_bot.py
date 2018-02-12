@@ -34,7 +34,7 @@ def get_emoji_name(jsonData):
 def compare_results(emojiName, emojiChar):
     resultsPath = "results.txt"
     if (os.path.exists(resultsPath)):
-        with io.open("test", mode="r", encoding="utf-8") as f:
+        with io.open("results.txt", mode="r", encoding="utf-8") as f:
             current, initialTime = f.readline().split(" ")
             initialTime = datetime.fromtimestamp(int(initialTime))
         if (current == emojiChar):
