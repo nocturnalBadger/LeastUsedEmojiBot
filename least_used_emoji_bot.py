@@ -75,7 +75,7 @@ leastUsedEmojiName = get_emoji_name(leastUsedEmojiData)
 
 
 tweetText = compare_results(leastUsedEmojiName, leastUsedEmojiChar)
-print(tweetText)
+#print(tweetText)
 
 
 update_profile_image(leastUsedEmojiData)
