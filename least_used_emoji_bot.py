@@ -1,9 +1,11 @@
-import math, json, io
+import math, json, io, os, time
 import requests, tweepy
 from credentials import *
 from datetime import datetime
-import os.path
 
+
+os.environ["TZ"] = "UTC"
+time.tzset()
 
 def get_least_used_emoji():
     url = "http://emojitracker.com/api/rankings"
@@ -44,6 +46,7 @@ def compare_results(emojiName, emojiChar):
             initialTime = datetime.fromtimestamp(int(initialTime))
         if current == emojiChar:
             timeStanding = datetime.utcnow() - initialTime
+            print(timeStanding)
             daysStanding = timeStanding.days
             if daysStanding > 1:
                 return "%s (%s) has been the least used emoji for %i days" %(emojiChar, emojiName, daysStanding)
