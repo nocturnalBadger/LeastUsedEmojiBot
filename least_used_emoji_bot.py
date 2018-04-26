@@ -48,13 +48,14 @@ def compare_results(emojiName, emojiChar):
             timeStanding = datetime.utcnow() - initialTime
             print(timeStanding)
             daysStanding = timeStanding.days
-            if daysStanding > 1:
+            hoursStanding = math.floor(timeStanding.seconds / 3600)
+
+            if daysStanding > 1 and hoursStanding < 12:
                 return "%s (%s) has been the least used emoji for %i days" %(emojiChar, emojiName, daysStanding)
             elif daysStanding == 1:
                 return "%s (%s) has been the least used emoji for over a full day" %(emojiChar, emojiName)
             else:
-                hoursStanding = math.floor(timeStanding.seconds / 3600)
-                if (hoursStanding % 6 == 0):
+                if hoursStanding % 6 == 0:
                     return "%s (%s) has been the least used emoji for over %i hours" %(emojiChar, emojiName, hoursStanding)
                 else:
                     return "%s (%s) is still the least used emoji" % (emojiChar, emojiName)
