@@ -7,6 +7,7 @@ from datetime import datetime
 os.environ["TZ"] = "UTC"
 time.tzset()
 
+
 def get_least_used_emoji():
     url = "http://emojitracker.com/api/rankings"
 
@@ -58,10 +59,12 @@ def compare_results(emojiName, emojiChar):
             elif daysStanding == 1:
                 return "%s (%s) has been the least used emoji for over a full day" %(emojiChar, emojiName)
             else:
-                if hoursStanding % 6 == 0:
-                    return "%s (%s) has been the least used emoji for over %i hours" %(emojiChar, emojiName, hoursStanding)
+                if hoursStanding < 3 or hoursStanding % 6 == 0:
+                    return "%s (%s) has been the least used emoji for over %i hours" % (emojiChar, emojiName, hoursStanding)
+                elif hoursStanding == 1:
+                    return "%s (%s) has been the least used emoji for over an hour" % (emojiChar, emojiName)
                 else:
-                    return "%s (%s) is still the least used emoji" % (emojiChar, emojiName)
+                    return None
         else:
             with open("results.txt", 'wb') as f:
                 resultsText = (emojiChar + " " + str(math.floor(datetime.utcnow().timestamp()))).encode('utf-8')
@@ -71,31 +74,31 @@ def compare_results(emojiName, emojiChar):
     return "The least used emoji is currently: %s (%s)" % (leastUsedEmojiChar, leastUsedEmojiName)
 
 
-# Access and authorize our Twitter credentials from credentials.py
-auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
-auth.set_access_token(access_token, access_token_secret)
-api = tweepy.API(auth)
+if __name__ == "__main__":
+    # Access and authorize our Twitter credentials from credentials.py
+    auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
+    auth.set_access_token(access_token, access_token_secret)
+    api = tweepy.API(auth)
 
-leastUsedEmojiData = get_least_used_emoji()
-leastUsedEmojiChar = get_emoji_char(leastUsedEmojiData)
-leastUsedEmojiName = get_emoji_name(leastUsedEmojiData)
+    leastUsedEmojiData = get_least_used_emoji()
+    leastUsedEmojiChar = get_emoji_char(leastUsedEmojiData)
+    leastUsedEmojiName = get_emoji_name(leastUsedEmojiData)
 
+    tweetText = compare_results(leastUsedEmojiName, leastUsedEmojiChar)
+    if tweetText is None:
+        exit(1)
 
-tweetText = compare_results(leastUsedEmojiName, leastUsedEmojiChar)
-if tweetText is None:
-    exit(1)
+    print(tweetText.encode('utf-8'))
 
-print(tweetText.encode('utf-8'))
+    update_profile_image(leastUsedEmojiData)
 
-
-update_profile_image(leastUsedEmojiData)
-
-try:
-    api.update_status(tweetText)
-except tweepy.TweepError as e:
-    print(e.reason)
-
-# try:
-#     api.update_status(leastUsedEmojiChar * 140)
-# except tweepy.TweepError as e:
-#     print(e.reason)
+    try:
+        api.update_status(tweetText)
+    except tweepy.TweepError as e:
+        print(e.reason)
+        # If status is a duplicate, change it to be ok.
+        if e.api_code is 187:
+            now = datetime.utcnow()
+            tweetText = "As of %s:%s UTC " % (now.hour, now.minute) + tweetText
+            # Try one more time
+            api.update_status(tweetText)
