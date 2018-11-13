@@ -98,7 +98,9 @@ if __name__ == "__main__":
         print(e.reason)
         # If status is a duplicate, change it to be ok.
         if e.api_code is 187:
+            print("Duplicate status. Adding timestamp.")
             now = datetime.utcnow()
-            tweetText = "As of %s:%s UTC " % (now.hour, now.minute) + tweetText
+            tweetText = tweetText + " (as of %s:%s UTC)" % (now.hour, now.minute)
+            print(tweetText.encode('utf-8'))
             # Try one more time
             api.update_status(tweetText)
