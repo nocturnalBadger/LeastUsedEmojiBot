@@ -1,11 +1,14 @@
-import math, json, io, os, time
+import math, json, io, os, ntplib
 import requests, tweepy
 from credentials import *
-from datetime import datetime
+from datetime import (datetime, timezone)
 
 
-os.environ["TZ"] = "UTC"
-time.tzset()
+def fetch_utc_time():
+    ntp = ntplib.NTPClient()
+    # Get time from a ntp server in the uk pool
+    response = ntp.request('uk.pool.ntp.org', version=3)
+    return datetime.fromtimestamp(response.tx_time, timezone.utc)
 
 
 def get_least_used_emoji():
@@ -19,7 +22,6 @@ def get_least_used_emoji():
 
 
 def update_profile_image(jsonData):
-    name = jsonData['name'].lower().replace(' ', '-')
     id = jsonData['id'].lower()
 
     url = "https://abs.twimg.com/emoji/v2/72x72/%s.png" % id
@@ -39,14 +41,14 @@ def get_emoji_name(jsonData):
     return jsonData['name'].capitalize()
 
 
-def compare_results(emojiName, emojiChar):
+def compare_results(emojiName, emojiChar, currentTime):
     resultsPath = "results.txt"
-    if os.path.exists(resultsPath)  :
+    if os.path.exists(resultsPath):
         with io.open("results.txt", mode="r", encoding="utf-8") as f:
             current, initialTime = f.readline().split(" ")
-            initialTime = datetime.fromtimestamp(int(initialTime))
+            initialTime = datetime.fromtimestamp(int(initialTime), timezone.utc)
         if current == emojiChar:
-            timeStanding = datetime.utcnow() - initialTime
+            timeStanding = currentTime - initialTime
             print(timeStanding)
             daysStanding = timeStanding.days
             hoursStanding = math.floor(timeStanding.seconds / 3600)
@@ -70,8 +72,8 @@ def compare_results(emojiName, emojiChar):
                     return None
         else:
             with open("results.txt", 'wb') as f:
-                resultsText = (emojiChar + " " + str(math.floor(datetime.utcnow().timestamp()))).encode('utf-8')
-                f.write(resultsText)
+                resultsText = "%s %d" % (emojiChar, math.floor(currentTime.timestamp()))
+                f.write(resultsText.encode("utf-8"))
             return "The least used emoji is now: %s (%s)" % (leastUsedEmojiChar, leastUsedEmojiName)
 
     return "The least used emoji is currently: %s (%s)" % (leastUsedEmojiChar, leastUsedEmojiName)
@@ -87,7 +89,9 @@ if __name__ == "__main__":
     leastUsedEmojiChar = get_emoji_char(leastUsedEmojiData)
     leastUsedEmojiName = get_emoji_name(leastUsedEmojiData)
 
-    tweetText = compare_results(leastUsedEmojiName, leastUsedEmojiChar)
+    currentTime = fetch_utc_time()
+
+    tweetText = compare_results(leastUsedEmojiName, leastUsedEmojiChar, currentTime)
     if tweetText is None:
         print("No status update.")
         exit()
@@ -103,8 +107,7 @@ if __name__ == "__main__":
         # If status is a duplicate, change it to be ok.
         if e.api_code is 187:
             print("Duplicate status. Adding timestamp.")
-            now = datetime.utcnow()
-            tweetText = tweetText + " (as of %02d:%02d UTC)" % (now.hour, now.minute)
+            tweetText = tweetText + " (as of %02d:%02d UTC)" % (currentTime.hour, currentTime.minute)
             print(tweetText.encode('utf-8'))
             # Try one more time
             api.update_status(tweetText)
