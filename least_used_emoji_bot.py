@@ -52,12 +52,15 @@ def compare_results(emojiName, emojiChar):
             hoursStanding = math.floor(timeStanding.seconds / 3600)
 
             if daysStanding > 1:
-                if hoursStanding < 12:
-                    return "%s (%s) has been the least used emoji for %i days" %(emojiChar, emojiName, daysStanding)
+                if hoursStanding == 0:
+                    return "%s (%s) has been the least used emoji for %i days" % (emojiChar, emojiName, daysStanding)
                 else:
                     return None
             elif daysStanding == 1:
-                return "%s (%s) has been the least used emoji for over a full day" %(emojiChar, emojiName)
+                if hoursStanding == 0:
+                    return "%s (%s) has been the least used emoji for over a full day" %(emojiChar, emojiName)
+                else:
+                    return None
             else:
                 if hoursStanding == 1:
                     return "%s (%s) has been the least used emoji for over an hour" % (emojiChar, emojiName)
