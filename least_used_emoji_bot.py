@@ -89,7 +89,8 @@ if __name__ == "__main__":
 
     tweetText = compare_results(leastUsedEmojiName, leastUsedEmojiChar)
     if tweetText is None:
-        exit(1)
+        print("No status update.")
+        exit()
 
     print(tweetText.encode('utf-8'))
 
