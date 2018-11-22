@@ -63,13 +63,8 @@ def compare_results(emojiName, emojiChar, currentTime):
                     return "%s (%s) has been the least used emoji for over a full day" %(emojiChar, emojiName)
                 else:
                     return None
-            elif hoursStanding >= 1:
-                if hoursStanding == 1:
-                    return "%s (%s) has been the least used emoji for over an hour" % (emojiChar, emojiName)
-                elif hoursStanding < 3 or hoursStanding % 6 == 0:
-                    return "%s (%s) has been the least used emoji for over %i hours" % (emojiChar, emojiName, hoursStanding)
-                else:
-                    return None
+            elif hoursStanding > 1 and hoursStanding % 6 == 0:
+                return "%s (%s) has been the least used emoji for over %i hours" % (emojiChar, emojiName, hoursStanding)
             else:
                 return None
         else:
