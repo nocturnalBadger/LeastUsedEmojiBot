@@ -7,7 +7,7 @@ from datetime import (datetime, timezone)
 def fetch_utc_time():
     ntp = ntplib.NTPClient()
     # Get time from a ntp server in the uk pool
-    response = ntp.request('uk.pool.ntp.org', version=3)
+    response = ntp.request('time.nist.gov', version=3)
     return datetime.fromtimestamp(response.tx_time, timezone.utc)
 
 
