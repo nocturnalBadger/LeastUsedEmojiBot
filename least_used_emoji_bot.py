@@ -6,8 +6,22 @@ from datetime import (datetime, timezone)
 
 def fetch_utc_time():
     ntp = ntplib.NTPClient()
-    # Get time from a ntp server in the uk pool
-    response = ntp.request('time.nist.gov', version=3)
+    # Get the time. Retry up to 10 times if there is no response
+    retries = 10
+    while True:
+        try:
+            response = ntp.request('time.nist.gov', version=3)
+            break # Exit condition - we got the time and everything's fine
+        except ntplib.NTPException as e:
+            if retries == 0:
+                # Finally give up
+                raise e
+
+            print("Exception: %s Retrying." % e)
+
+        time.sleep(15)
+        retries -= 1
+
     return datetime.fromtimestamp(response.tx_time, timezone.utc)
 
 
