@@ -1,6 +1,13 @@
-import math, json, io, os, ntplib, time
-import requests, tweepy
-from credentials import *
+import math
+import json
+import io
+import os
+import ntplib
+import time
+import requests
+import tweepy
+from credentials import (consumer_key, consumer_secret,
+                         access_token, access_token_secret)
 from datetime import (datetime, timezone)
 
 
@@ -11,7 +18,7 @@ def fetch_utc_time():
     while True:
         try:
             response = ntp.request('time.nist.gov', version=3)
-            break # Exit condition - we got the time and everything's fine
+            break  # Exit condition - we got the time and everything's fine
         except ntplib.NTPException as e:
             if retries == 0:
                 # Finally give up
@@ -69,23 +76,27 @@ def compare_results(emojiName, emojiChar, currentTime):
 
             if daysStanding > 1:
                 if hoursStanding == 0:
-                    return "%s (%s) has been the least used emoji for %i days" % (emojiChar, emojiName, daysStanding)
+                    return "%s (%s) has been the least used emoji for %i days"\
+                            % (emojiChar, emojiName, daysStanding)
                 else:
                     return None
             elif daysStanding == 1:
                 if hoursStanding == 0:
-                    return "%s (%s) has been the least used emoji for over a full day" %(emojiChar, emojiName)
+                    return "%s (%s) has been the least used emoji for over a full day"\
+                            % (emojiChar, emojiName)
                 else:
                     return None
             elif hoursStanding > 1 and hoursStanding % 6 == 0:
-                return "%s (%s) has been the least used emoji for over %i hours" % (emojiChar, emojiName, hoursStanding)
+                return "%s (%s) has been the least used emoji for over %i hours"\
+                        % (emojiChar, emojiName, hoursStanding)
             else:
                 return None
         else:
             with open("results.txt", 'wb') as f:
                 resultsText = "%s %d" % (emojiChar, math.floor(currentTime.timestamp()))
                 f.write(resultsText.encode("utf-8"))
-            return "The least used emoji is now: %s (%s)" % (leastUsedEmojiChar, leastUsedEmojiName)
+            return "The least used emoji is now: %s (%s)"\
+                   % (leastUsedEmojiChar, leastUsedEmojiName)
 
     return "The least used emoji is currently: %s (%s)" % (leastUsedEmojiChar, leastUsedEmojiName)
 
@@ -116,9 +127,10 @@ if __name__ == "__main__":
     except tweepy.TweepError as e:
         print(e.reason)
         # If status is a duplicate, change it to be ok.
-        if e.api_code is 187:
+        if e.api_code == 187:
             print("Duplicate status. Adding timestamp.")
-            tweetText = tweetText + " (as of %02d:%02d UTC)" % (currentTime.hour, currentTime.minute)
+            tweetText = "%s (as of %02d:%02d UTC)"\
+                        % (tweetText, currentTime.hour, currentTime.minute)
             print(tweetText.encode('utf-8'))
             # Try one more time
             api.update_status(tweetText)
