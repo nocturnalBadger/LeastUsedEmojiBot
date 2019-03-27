@@ -65,7 +65,7 @@ def get_emoji_name(jsonData):
 def compare_results(emojiName, emojiChar, currentTime):
     resultsPath = "results.txt"
     if os.path.exists(resultsPath):
-        with io.open("results.txt", mode="r", encoding="utf-8") as f:
+        with io.open(resultsPath, mode="r", encoding="utf-8") as f:
             current, initialTime = f.readline().split(" ")
             initialTime = datetime.fromtimestamp(int(initialTime), timezone.utc)
         if current == emojiChar:
@@ -74,25 +74,36 @@ def compare_results(emojiName, emojiChar, currentTime):
             daysStanding = timeStanding.days
             hoursStanding = math.floor(timeStanding.seconds / 3600)
 
-            if daysStanding > 1:
+            # Past one week, always report at noon UTC
+            if daysStanding > 7:
+                if currentTime.hour == 12:
+                    return "%s (%s) has been the least used emoji for %i days"\
+                            % (emojiChar, emojiName, daysStanding)
+                else:
+                    return None
+            # Past one day, report daily at the same hour of the most recent change
+            elif daysStanding > 1:
                 if hoursStanding == 0:
                     return "%s (%s) has been the least used emoji for %i days"\
                             % (emojiChar, emojiName, daysStanding)
                 else:
                     return None
+            # Special case for just one day
             elif daysStanding == 1:
                 if hoursStanding == 0:
                     return "%s (%s) has been the least used emoji for over a full day"\
                             % (emojiChar, emojiName)
                 else:
                     return None
+            # Past one hour, report every 6 hours
             elif hoursStanding > 1 and hoursStanding % 6 == 0:
                 return "%s (%s) has been the least used emoji for over %i hours"\
                         % (emojiChar, emojiName, hoursStanding)
             else:
                 return None
+        # Report that it just changed and update result file
         else:
-            with open("results.txt", 'wb') as f:
+            with open(resultsPath, 'wb') as f:
                 resultsText = "%s %d" % (emojiChar, math.floor(currentTime.timestamp()))
                 f.write(resultsText.encode("utf-8"))
             return "The least used emoji is now: %s (%s)"\
